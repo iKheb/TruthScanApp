@@ -1,11 +1,15 @@
-﻿function resolveApiUrl(rawUrl) {
+function resolveApiUrl(rawUrl) {
   const base = String(rawUrl || "").trim();
   if (!base) return "";
   if (base.endsWith("/analyze")) return base;
   return `${base.replace(/\/+$/, "")}/analyze`;
 }
 
-const API_URL = resolveApiUrl(import.meta.env.VITE_OPENAI_ANALYSIS_API_URL);
+const DEFAULT_WORKER_ANALYZE_URL = "https://ai-api-dave.truthscan-openai-analyzer.workers.dev/analyze";
+export const API_URL =
+  resolveApiUrl(import.meta.env.VITE_OPENAI_ANALYSIS_API_URL) ||
+  resolveApiUrl(import.meta.env.VITE_DEFAULT_ANALYSIS_API_URL) ||
+  DEFAULT_WORKER_ANALYZE_URL;
 
 function clampNumber(value, min, max) {
   const parsed = Number(value);

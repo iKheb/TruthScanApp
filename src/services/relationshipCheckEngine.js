@@ -1,17 +1,10 @@
 import { summarizeRelationshipAnswers } from "../data/relationshipCheckQuestions";
-import { runConversationAnalysis } from "./analysisEngine";
+import { API_URL, runConversationAnalysis } from "./analysisEngine";
 
-function resolveAnalyzeUrl(rawUrl) {
-  const base = String(rawUrl || "").trim();
+function resolveRelationshipUrl(analyzeUrl) {
+  const base = String(analyzeUrl || "").trim();
   if (!base) return "";
-  if (base.endsWith("/analyze")) return base;
-  return `${base.replace(/\/+$/, "")}/analyze`;
-}
-
-function resolveRelationshipUrl(rawUrl) {
-  const analyzeUrl = resolveAnalyzeUrl(rawUrl);
-  if (!analyzeUrl) return "";
-  return analyzeUrl.replace(/\/analyze$/, "/relationship-check");
+  return base.replace(/\/analyze$/, "/relationship-check");
 }
 
 function clampScore(value) {
@@ -31,7 +24,7 @@ function buildHighlight({ reciprocityLevel, redFlagsCount }) {
     return "Estas invirtiendo mas energia emocional de la que recibes.";
   }
   if (redFlagsCount >= 2) {
-    return "Hay quimica, pero tambien señales que no conviene ignorar.";
+    return "Hay quimica, pero tambien senales que no conviene ignorar.";
   }
   if (reciprocityLevel >= 75) {
     return "Se ve una dinamica mas reciproca y consistente.";
@@ -84,7 +77,7 @@ export function buildRelationshipShareText(result) {
 }
 
 export async function runRelationshipCheck(answers, questions) {
-  const relationshipUrl = resolveRelationshipUrl(import.meta.env.VITE_OPENAI_ANALYSIS_API_URL);
+  const relationshipUrl = resolveRelationshipUrl(API_URL);
   const summary = summarizeRelationshipAnswers(answers, questions);
 
   if (!summary) {
@@ -110,7 +103,6 @@ export async function runRelationshipCheck(answers, questions) {
   if (response.ok) {
     const payload = await response.json();
     if (typeof payload === "object" && payload) {
-      // Support both dedicated endpoint response and legacy /analyze shape.
       if ("diagnosis" in payload || "reciprocityLevel" in payload || "redFlags" in payload) {
         return { result: normalizeRelationshipResult(payload), sourceText: summary };
       }

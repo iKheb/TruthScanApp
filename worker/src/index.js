@@ -245,15 +245,22 @@ export default {
       }
 
       if (!env.OPENAI_API_KEY) {
-        return json({ error: "OPENAI_API_KEY no configurada en Worker." }, 500, origin);
+        // Continue below, we support Groq secrets too.
       }
 
-      const model = env.OPENAI_MODEL || "gpt-4o-mini";
+      const useGroq = Boolean(env.GROQ_API_KEY);
+      const apiKey = useGroq ? env.GROQ_API_KEY : env.OPENAI_API_KEY;
+      if (!apiKey) {
+        return json({ error: "Configura GROQ_API_KEY o OPENAI_API_KEY en el Worker." }, 500, origin);
+      }
 
-      const openAiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+      const apiUrl = useGroq ? "https://api.groq.com/openai/v1/chat/completions" : "https://api.openai.com/v1/chat/completions";
+      const model = useGroq ? env.GROQ_MODEL || "llama-3.1-8b-instant" : env.OPENAI_MODEL || "gpt-4o-mini";
+
+      const openAiResponse = await fetch(apiUrl, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
