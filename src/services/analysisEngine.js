@@ -6,10 +6,20 @@ function resolveApiUrl(rawUrl) {
 }
 
 const DEFAULT_WORKER_ANALYZE_URL = "https://ai-api-dave.truthscan-openai-analyzer.workers.dev/analyze";
-export const API_URL =
-  resolveApiUrl(import.meta.env.VITE_OPENAI_ANALYSIS_API_URL) ||
-  resolveApiUrl(import.meta.env.VITE_DEFAULT_ANALYSIS_API_URL) ||
-  DEFAULT_WORKER_ANALYZE_URL;
+
+function isLocalApiUrl(url) {
+  return /127\.0\.0\.1|localhost/.test(String(url || ""));
+}
+
+function isLocalAppRuntime() {
+  if (typeof window === "undefined") return false;
+  return /127\.0\.0\.1|localhost/.test(window.location.hostname);
+}
+
+const envPrimary = resolveApiUrl(import.meta.env.VITE_OPENAI_ANALYSIS_API_URL);
+const envFallback = resolveApiUrl(import.meta.env.VITE_DEFAULT_ANALYSIS_API_URL) || DEFAULT_WORKER_ANALYZE_URL;
+
+export const API_URL = !isLocalAppRuntime() && isLocalApiUrl(envPrimary) ? envFallback : envPrimary || envFallback;
 
 function clampNumber(value, min, max) {
   const parsed = Number(value);
