@@ -264,7 +264,9 @@ function RelationshipCheck() {
           <p className="text-[11px] uppercase tracking-[0.14em] text-cyan-300">Test guiado</p>
           <h1 className="display-font mt-1 text-3xl font-extrabold sm:text-4xl">¿Tu relacion esta sana? Descubrelo</h1>
           <p className="mt-2 text-sm text-white/70">Responde rapido y te damos un diagnostico emocional claro y compartible.</p>
-          {isAuthenticated && plan === "free" ? <p className="mt-1 text-xs text-cyan-300">Te quedan {quota?.remaining ?? 0} analisis hoy.</p> : null}
+          {isAuthenticated && plan === "free" ? (
+            <p className="mt-1 text-xs text-cyan-300">{quota?.limit == null ? "Analisis ilimitados por ahora." : `Te quedan ${quota?.remaining ?? 0} analisis hoy.`}</p>
+          ) : null}
 
           <div className="mt-5">
             <div className="mb-2 flex items-center justify-between text-xs text-white/60">

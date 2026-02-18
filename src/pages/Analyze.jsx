@@ -52,7 +52,7 @@ function Analyze() {
           <span className="pill">Ghosting</span>
           <span className="pill">Gaslighting</span>
           <span className="pill">Senales mixtas</span>
-          {isAuthenticated && plan === "free" ? <span className="pill">Te quedan {quota?.remaining ?? 0} analisis hoy</span> : null}
+          {isAuthenticated && plan === "free" ? <span className="pill">{quota?.limit == null ? "Ilimitado por ahora" : `Te quedan ${quota?.remaining ?? 0} analisis hoy`}</span> : null}
           {isAuthenticated && plan === "pro" ? <span className="pill">Plan Pro activo</span> : null}
         </div>
         <div className="mt-5">

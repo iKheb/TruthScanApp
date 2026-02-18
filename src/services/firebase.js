@@ -28,6 +28,7 @@ const firebaseConfig = {
 };
 
 const isFirebaseConfigured = Object.values(firebaseConfig).every(Boolean);
+const USAGE_LIMITS_ENABLED = String(import.meta.env.VITE_ENABLE_USAGE_LIMITS || "false").toLowerCase() === "true";
 
 let auth;
 let db;
@@ -130,6 +131,9 @@ export async function getDailyQuotaStatus() {
   if (!db) throw new Error("Firebase no configurado.");
   const user = getAuthenticatedUserOrThrow();
   const plan = await getUserPlan();
+  if (!USAGE_LIMITS_ENABLED) {
+    return { plan, used: 0, limit: null, remaining: null, disabled: true };
+  }
   const limitPerDay = plan === "pro" ? Number.POSITIVE_INFINITY : 3;
   const usageRef = doc(db, "users", user.uid, "daily_usage", getTodayKey());
   let usageSnap;
@@ -155,6 +159,9 @@ export async function consumeDailyAnalysisQuota() {
   if (!db) throw new Error("Firebase no configurado.");
   const user = getAuthenticatedUserOrThrow();
   const plan = await getUserPlan();
+  if (!USAGE_LIMITS_ENABLED) {
+    return { plan, used: 0, remaining: null, limit: null, disabled: true };
+  }
   if (plan === "pro") return { plan, used: 0, remaining: null, limit: null };
 
   const usageRef = doc(db, "users", user.uid, "daily_usage", getTodayKey());

@@ -29,7 +29,11 @@ function AppFooter() {
           Este analisis es orientativo y no reemplaza asesoramiento profesional.
         </p>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          {isAuthenticated ? <span className="pill hidden sm:inline-flex">{plan === "pro" ? "Plan Pro" : `Free: ${quota?.remaining ?? 0} hoy`}</span> : null}
+          {isAuthenticated ? (
+            <span className="pill hidden sm:inline-flex">
+              {plan === "pro" ? "Plan Pro" : quota?.limit == null ? "Free ilimitado (temporal)" : `Free: ${quota?.remaining ?? 0} hoy`}
+            </span>
+          ) : null}
           {isAuthenticated ? <span className="hidden text-white/55 sm:inline">{user?.email || "Sesion activa"}</span> : null}
           <GoogleAuthButton
             onClick={onAuthAction}

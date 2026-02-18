@@ -121,7 +121,7 @@ function PersonalityTest() {
           <ArrowLeft className="h-4 w-4" />
           Volver
         </Link>
-        {isAuthenticated && plan === "free" ? <span className="pill">Quedan {quota?.remaining ?? 0} analisis hoy</span> : null}
+        {isAuthenticated && plan === "free" ? <span className="pill">{quota?.limit == null ? "Ilimitado por ahora" : `Quedan ${quota?.remaining ?? 0} analisis hoy`}</span> : null}
       </div>
 
       {loading ? (
