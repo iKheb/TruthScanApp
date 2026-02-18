@@ -1,0 +1,6 @@
+﻿name = "ai-api-dave"
+main = "src/index.js"
+compatibility_date = "2025-01-15"
+
+[vars]
+OPENAI_MODEL = "gpt-4o-mini"

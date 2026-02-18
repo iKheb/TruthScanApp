@@ -1,0 +1,7 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#050509"/>
+  <circle cx="210" cy="130" r="200" fill="#6C5CE7" fill-opacity="0.25"/>
+  <circle cx="980" cy="70" r="220" fill="#00D1FF" fill-opacity="0.2"/>
+  <text x="90" y="285" fill="white" font-family="Outfit, Arial" font-size="72" font-weight="700">TruthScan</text>
+  <text x="90" y="362" fill="#00D1FF" font-family="Outfit, Arial" font-size="48" font-weight="500">Pega tu chat. Descubre la verdad.</text>
+</svg>

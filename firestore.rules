@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /analyses/{analysisId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /users/{userId} {
+      allow read, create, update: if isSignedIn() && request.auth.uid == userId;
+      allow delete: if false;
+
+      match /daily_usage/{dayId} {
+        allow read, create, update: if isSignedIn() && request.auth.uid == userId;
+        allow delete: if false;
+      }
+    }
+
+    match /saved_people/{personId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, delete: if isOwner(resource.data.userId);
+      allow update: if isOwner(resource.data.userId) && request.resource.data.userId == resource.data.userId;
+
+      match /analyses/{analysisId} {
+        allow read, create: if isSignedIn() &&
+          get(/databases/$(database)/documents/saved_people/$(personId)).data.userId == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+
+    match /personality_tests/{testId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+  }
+}
